@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links App - Web Interface</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .form-section {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.3s;
+            width: 100%;
+            font-weight: 600;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .filters-section {
+            padding: 0 30px 20px 30px;
+            background: #f8f9fa;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filters input,
+        .filters select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .filters button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .filters button:hover {
+            background: #5a6268;
+        }
+        
+        .links-section {
+            padding: 30px;
+        }
+        
+        .date-section {
+            margin-bottom: 30px;
+        }
+        
+        .date-section h2 {
+            color: #667eea;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .link-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 6px 6px 0;
+            transition: all 0.3s;
+        }
+        
+        .link-card:hover {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+        
+        .link-url {
+            word-break: break-all;
+            color: #0066cc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .link-note {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .link-date {
+            font-size: 0.85rem;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .link-actions {
+            margin-top: 10px;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .stats {
+            background: #e9ecef;
+            padding: 15px 30px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .form-section,
+            .links-section {
+                padding: 20px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filters input,
+            .filters select,
+            .filters button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔗 Links App</h1>
+            <p>Guarda y organiza tus enlaces por fecha con notas</p>
+        </header>
+        
+        <div class="form-section">
+            <h2>Agregar Nuevo Enlace</h2>
+            <form id="linkForm">
+                <div class="form-group">
+                    <label for="url">URL:</label>
+                    <input type="url" id="url" placeholder="https://ejemplo.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="note">Nota:</label>
+                    <textarea id="note" placeholder="Escribe una nota sobre este enlace..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-submit">Guardar Enlace</button>
+            </form>
+        </div>
+        
+        <div class="filters-section">
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="Buscar enlaces...">
+                <select id="dateFilter">
+                    <option value="all">Todas las fechas</option>
+                </select>
+                <button type="button" id="clearFilters">Limpiar filtros</button>
+            </div>
+        </div>
+        
+        <div class="stats" id="stats">
+            Cargando enlaces...
+        </div>
+        
+        <div class="links-section" id="linksContainer">
+            <!-- Los enlaces se insertarán aquí -->
+        </div>
+    </div>
+
+    <script>
+        // Clase para manejar la app de enlaces
+        class LinksApp {
+            constructor() {
+                this.links = this.loadLinks();
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.render();
+            }
+            
+            bindEvents() {
+                const form = document.getElementById('linkForm');
+                const searchInput = document.getElementById('searchInput');
+                const dateFilter = document.getElementById('dateFilter');
+                const clearFilters = document.getElementById('clearFilters');
+                
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addLink();
+                });
+                
+                searchInput.addEventListener('input', () => this.render());
+                dateFilter.addEventListener('change', () => this.render());
+                clearFilters.addEventListener('click', () => {
+                    searchInput.value = '';
+                    dateFilter.value = 'all';
+                    this.render();
+                });
+            }
+            
+            addLink() {
+                const url = document.getElementById('url').value.trim();
+                const note = document.getElementById('note').value.trim();
+                
+                if (!url || !note) {
+                    alert('Por favor completa ambos campos');
+                    return;
+                }
+                
+                // Validar URL básica
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    alert('La URL debe comenzar con http:// o https://');
+                    return;
+                }
+                
+                const now = new Date();
+                const dateKey = now.toISOString().split('T')[0]; // YYYY-MM-DD
+                const timestamp = now.toISOString();
+                
+                const newLink = {
+                    id: Date.now() + Math.random(), // ID único
+                    url: url,
+                    note: note,
+                    dateAdded: timestamp,
+                    dateKey: dateKey
+                };
+                
+                this.links.push(newLink);
+                this.saveLinks();
+                this.render();
+                
+                // Reset form
+                form.reset();
+                document.getElementById('url').focus();
+            }
+            
+            getFilteredLinks() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const dateFilter = document.getElementById('dateFilter').value;
+                
+                return this.links.filter(link => {
+                    const matchesSearch = 
+                        link.url.toLowerCase().includes(searchTerm) ||
+                        link.note.toLowerCase().includes(searchTerm);
+                    
+                    const matchesDate = 
+                        dateFilter === 'all' || 
+                        link.dateKey === dateFilter;
+                    
+                    return matchesSearch && matchesDate;
+                });
+            }
+            
+            deleteLink(id) {
+                if (confirm('¿Estás seguro de que quieres eliminar este enlace?')) {
+                    this.links = this.links.filter(link => link.id !== id);
+                    this.saveLinks();
+                    this.render();
+                }
+            }
+            
+            saveLinks() {
+                try {
+                    localStorage.setItem('linksAppData', JSON.stringify(this.links));
+                    this.updateDateFilter();
+                } catch (e) {
+                    console.error('Error saving links:', e);
+                    alert('Error al guardar los datos. Inténtalo de nuevo.');
+                }
+            }
+            
+            loadLinks() {
+                try {
+                    const data = localStorage.getItem('linksAppData');
+                    return data ? JSON.parse(data) : [];
+                } catch (e) {
+                    console.error('Error loading links:', e);
+                    return [];
+                }
+            }
+            
+            updateDateFilter() {
+                const dateFilter = document.getElementById('dateFilter');
+                const currentValue = dateFilter.value;
+                
+                // Obtener todas las fechas únicas
+                const dates = [...new Set(this.links.map(link => link.dateKey))].sort().reverse();
+                
+                // Reset opciones
+                dateFilter.innerHTML = '<option value="all">Todas las fechas</option>';
+                
+                // Agregar fechas
+                dates.forEach(date => {
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = this.formatDateDisplay(date);
+                    dateFilter.appendChild(option);
+                });
+                
+                // Mantener selección si es válida
+                if (currentValue && Array.from(dateFilter.options).some(opt => opt.value === currentValue)) {
+                    dateFilter.value = currentValue;
+                }
+            }
+            
+            formatDateDisplay(dateString) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString('es-ES', options);
+            }
+            
+            render() {
+                const filteredLinks = this.getFilteredLinks();
+                const linksContainer = document.getElementById('linksContainer');
+                const statsElement = document.getElementById('stats');
+                
+                // Actualizar estadísticas
+                statsElement.textContent = `${this.links.length} enlace(s) guardado(s), ${filteredLinks.length} mostrado(s)`;
+                
+                if (filteredLinks.length === 0) {
+                    linksContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔍</div>
+                            <p>No se encontraron enlaces con los filtros actuales.</p>
+                            ${this.links.length === 0 ? 
+                                '<p>¡Agrega tu primer enlace usando el formulario de arriba!</p>' : ''}
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Agrupar enlaces por fecha
+                const groupedLinks = {};
+                filteredLinks.forEach(link => {
+                    if (!groupedLinks[link.dateKey]) {
+                        groupedLinks[link.dateKey] = [];
+                    }
+                    groupedLinks[link.dateKey].push(link);
+                });
+                
+                // Ordenar fechas (más recientes primero)
+                const sortedDates = Object.keys(groupedLinks).sort().reverse();
+                
+                let html = '';
+                sortedDates.forEach(dateKey => {
+                    html += `
+                        <div class="date-section">
+                            <h2>${this.formatDateDisplay(dateKey)}</h2>
+                    `;
+                    
+                    groupedLinks[dateKey].forEach(link => {
+                        html += `
+                            <div class="link-card" data-id="${link.id}">
+                                <div class="link-url">${link.url}</div>
+                                <div class="link-note">${link.note}</div>
+                                <div class="link-date">${this.formatDateTime(link.dateAdded)}</div>
+                                <div class="link-actions">
+                                    <button class="btn-delete" onclick="app.deleteLink(${link.id})">Eliminar</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                });
+                
+                linksContainer.innerHTML = html;
+            }
+            
+            formatDateTime(isoString) {
+                const date = new Date(isoString);
+                return date.toLocaleString('es-ES', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        }
+        
+        // Inicializar la app cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new LinksApp();
+        });
+    </script>
+</body>
+</html>
