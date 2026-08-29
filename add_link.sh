@@ -2,125 +2,112 @@
 set -e
 
 # =====================================================
-# Script para agregar un nuevo enlace a la app de enlaces
-# Soporta tags para organizar los enlaces
+# links-app - script para agregar un nuevo enlace
+# tags: cualquier tag personalizado (separados por coma)
 # =====================================================
 
-# Determinar el workspace
+# determinar el workspace
 WORKSPACE="${LINKS_APP_WORKSPACE:-$HOME/workspace/links_app}"
 LINK_DIR="$WORKSPACE/links"
 
-# Colores para la salida
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-# Tags predefinidos
-TAGS_PREDIFINIDOS=("ver-mas-tarde" "revisar" "compartir" "desarrollar" "urgente" "referencia" "favorito")
-
-# Función para mostrar ayuda
-mostrar_ayuda() {
-    echo -e "${GREEN}Uso:${NC} $0 [OPCIONES]"
-    echo ""
-    echo "Opciones:"
-    echo "  -u, --url <url>          URL del enlace (requerido)"
-    echo "  -n, --note <nota>        Nota descriptiva (requerido)"
-    echo "  -t, --tags <tags>        Tags separados por coma (opcional)"
-    echo "  -h, --help               Mostrar esta ayuda"
-    echo ""
-    echo -e "${YELLOW}Tags predefinidos:${NC}"
-    echo "  ver-mas-tarde, revisar, compartir, desarrollar, urgente, referencia, favorito"
-    echo ""
-    echo -e "${YELLOW}Ejemplos:${NC}"
-    echo "  $0 -u https://ejemplo.com -n 'Artículo sobre IA' -t 'ver-mas-tarde,desarrollar'"
-    echo "  $0 'https://github.com' 'Repositorio útil' 'favorito,referencia'"
-    exit 0
-}
-
-# Variables
+# valores por defecto
 url=""
 nota=""
 tags=""
 
-# Parsear argumentos
+# leer argumentos con flags
 while [[ $# -gt 0 ]]; do
     case $1 in
         -u|--url) url="$2"; shift 2 ;;
         -n|--note) nota="$2"; shift 2 ;;
         -t|--tags) tags="$2"; shift 2 ;;
-        -h|--help) mostrar_ayuda ;;
-        *) break ;;
+        -h|--help)
+            echo "uso: $0 -u <url> -n <nota> [-t <tags>]"
+            echo ""
+            echo "  -u, --url    URL del enlace"
+            echo "  -n, --note   Nota o descripcion"
+            echo "  -t, --tags   Tags separados por coma (ej: urgente,ia,trabajo)"
+            echo "  -h, --help   Mostrar esta ayuda"
+            echo ""
+            echo "ejemplos:"
+            echo "  $0 -u https://github.com -n 'Plataforma de codigo'"
+            echo "  $0 -u github.com -n 'Para ver despues' -t 'ver-mas-tarde,favorito'"
+            echo "  $0 https://github.com 'Plataforma' 'urgente,trabajo'"
+            exit 0
+            ;;
+        *)
+            # si no es flag, tratar como argumentos posicionales
+            if [[ -z "$url" ]]; then
+                url="$1"
+            elif [[ -z "$nota" ]]; then
+                nota="$1"
+            elif [[ -z "$tags" ]]; then
+                tags="$1"
+            fi
+            shift
+            ;;
     esac
 done
 
-# Si no se pasaron argumentos con flags, leer argumentos posicionales
+# validar url y nota
 if [[ -z "$url" || -z "$nota" ]]; then
-    if [[ $# -ge 2 ]]; then
-        url="${1:-}"
-        nota="${2:-}"
-        tags="${3:-}"
-    fi
-fi
-
-# Validar que se recibieron url y nota
-if [[ -z "$url" || -z "$nota" ]]; then
-    echo -e "${RED}Error: se requiere url y nota${NC}" >&2
-    echo "Uso: $0 -u <url> -n <nota> [-t <tags>]" >&2
-    echo "  o:  $0 <url> <nota> [tags]" >&2
-    echo "  o:  $0 --help" >&2
+    echo "error: se requieren url y nota" >&2
+    echo "uso: $0 -u <url> -n <nota> [-t <tags>]" >&2
+    echo "usa '$0 --help' para mas informacion" >&2
     exit 1
 fi
 
-# Agregar https:// si no tiene protocolo
+# agregar https:// si no tiene protocolo
 if [[ ! "$url" =~ ^https?:// ]]; then
     url="https://$url"
-    echo -e "${YELLOW}→ Se agregó https:// automáticamente${NC}"
 fi
 
-# Escapar caracteres especiales para regex
-url_escaped=$(echo "$url" | sed 's/[[\/.*^$]/\\&/g')
-
-# Validar formato URL básico
-if [[ ! "$url" =~ ^https?:// ]]; then
-    echo -e "${RED}Error: URL inválida${NC}" >&2
-    exit 1
+# normalizar tags: minusculas, sin espacios, separados por coma
+if [[ -n "$tags" ]]; then
+    # convertir a minusculas y limpiar
+    tags_normalized=$(echo "$tags" | tr '[:upper:]' '[:lower:]' | tr -s ' ' | sed 's/^ *//;s/ *$//')
+    # separar por coma, limpiar cada tag, eliminar vacios
+    tags_clean=""
+    IFS=',' read -ra TAG_ARRAY <<< "$tags_normalized"
+    for tag in "${TAG_ARRAY[@]}"; do
+        # eliminar espacios y caracteres especiales basicos
+        tag=$(echo "$tag" | tr -d ' ' | sed 's/[^a-z0-9_-]//g')
+        if [[ -n "$tag" ]]; then
+            if [[ -z "$tags_clean" ]]; then
+                tags_clean="$tag"
+            else
+                tags_clean="$tags_clean,$tag"
+            fi
+        fi
+    done
+    tags="$tags_clean"
 fi
 
-# Obtener fecha y hora actuales
+# obtener fecha y hora
 fecha=$(date +%F)   # 2026-08-28
 hora=$(date +%H%M%S)
 timestamp=$(date "+%Y-%m-%d - %H:%M:%S")
 
-# Crear directorio por fecha
+# crear directorio por fecha
 dir="$LINK_DIR/$fecha"
 mkdir -p "$dir"
 
-# Crear archivo único por hora+minuto+segundo
-file="$dir/link_${hora}.txt"
+# crear archivo unico por timestamp
+file="$dir/link_$hora.txt"
 
-# Escribir contenido con tags si existen
+# escribir contenido
+{
+    echo "-enlace: $url"
+    echo "-nota: $nota"
+    if [[ -n "$tags" ]]; then
+        echo "-tags: $tags"
+    fi
+    echo "-fecha: $timestamp"
+} > "$file"
+
+echo "✓ enlace guardado: $file"
+echo "  url:  $url"
+echo "  nota: $nota"
 if [[ -n "$tags" ]]; then
-    # Normalizar tags: reemplazar espacios por guiones, minúsculas
-    tags_normalized=$(echo "$tags" | sed 's/, /,/g' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
-    cat > "$file" << EOF
-Enlace: $url
-Nota: $nota
-Tags: $tags_normalized
-Fecha: $timestamp
-EOF
-else
-    cat > "$file" << EOF
-Enlace: $url
-Nota: $nota
-Fecha: $timestamp
-EOF
-fi
-
-echo ""
-echo -e "${GREEN}✓ Enlace guardado:${NC} $file"
-echo -e "  URL:   $url"
-echo -e "  Nota:  $nota"
-if [[ -n "$tags_normalized" ]]; then
-    echo -e "  Tags:  $tags_normalized"
+    echo "  tags: $tags"
 fi
