@@ -4,7 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Links App - Gestor de Enlaces</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #475569;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,262 +27,383 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f7fa;
-            color: #2c3e50;
-            line-height: 1.6;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
+        /* Header */
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 30px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
 
         header h1 {
-            font-size: 2.2em;
-            margin-bottom: 8px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
 
         header p {
-            opacity: 0.9;
-            font-size: 1.05em;
+            color: var(--text-secondary);
         }
 
-        .form-section, .filter-section {
-            background: white;
-            padding: 25px;
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
             border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid var(--border);
         }
 
-        .form-section h2, .filter-section h2 {
-            margin-bottom: 18px;
-            color: #2c3e50;
-            font-size: 1.3em;
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Form */
+        .form-section {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .form-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
 
-        label {
+        .form-group label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #34495e;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
         }
 
-        input, textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #e0e6ed;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 15px;
+            color: var(--text);
+            font-size: 1rem;
             transition: border-color 0.2s;
-            font-family: inherit;
         }
 
-        input:focus, textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
         }
 
-        textarea {
-            min-height: 80px;
+        .form-group textarea {
             resize: vertical;
+            min-height: 80px;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
+        /* Tags Selector */
+        .tags-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag-checkbox {
+            display: none;
+        }
+
+        .tag-label {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .tag-label:hover {
+            border-color: var(--primary);
+        }
+
+        .tag-checkbox:checked + .tag-label {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Tag colors */
+        .tag-ver-mas-tarde:checked + .tag-label { background: var(--danger); border-color: var(--danger); }
+        .tag-revisar:checked + .tag-label { background: var(--warning); border-color: var(--warning); }
+        .tag-compartir:checked + .tag-label { background: var(--success); border-color: var(--success); }
+        .tag-desarrollar:checked + .tag-label { background: var(--primary); border-color: var(--primary); }
+        .tag-urgente:checked + .tag-label { background: var(--danger); border-color: var(--danger); }
+        .tag-referencia:checked + .tag-label { background: #8b5cf6; border-color: #8b5cf6; }
+        .tag-favorito:checked + .tag-label { background: #ec4899; border-color: #ec4899; }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            font-size: 1rem;
         }
 
         .btn-primary {
-            background: #667eea;
+            background: var(--primary);
             color: white;
             width: 100%;
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            background: var(--primary-dark);
             transform: translateY(-1px);
         }
 
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-            margin-left: 8px;
-        }
-
-        .btn-secondary:hover {
-            background: #7f8c8d;
-        }
-
-        .filter-row {
+        /* Filters */
+        .filters {
             display: flex;
-            gap: 10px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
-        }
-
-        .filter-row input {
-            flex: 1;
-            min-width: 180px;
-        }
-
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .date-group {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .date-header {
-            background: #ecf0f1;
-            padding: 12px 20px;
-            font-weight: 700;
-            color: #2c3e50;
-            border-bottom: 2px solid #e0e6ed;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
         }
 
-        .date-count {
-            background: #667eea;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.85em;
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
         }
 
-        .link-item {
-            padding: 18px 20px;
-            border-bottom: 1px solid #ecf0f1;
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .filter-tag:hover,
+        .filter-tag.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Links List */
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .link-card {
+            background: var(--bg-card);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .link-card:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .link-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 12px;
-        }
-
-        .link-item:last-child {
-            border-bottom: none;
-        }
-
-        .link-content {
-            flex: 1;
-            min-width: 0;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .link-url {
-            color: #667eea;
+            color: var(--primary);
             text-decoration: none;
             font-weight: 600;
             word-break: break-all;
-            display: block;
-            margin-bottom: 6px;
         }
 
         .link-url:hover {
             text-decoration: underline;
         }
 
-        .link-note {
-            color: #555;
-            font-size: 0.95em;
-            margin-bottom: 4px;
+        .link-date {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
         }
 
-        .link-time {
-            color: #95a5a6;
-            font-size: 0.82em;
+        .link-note {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .link-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tag-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag-badge.ver-mas-tarde { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .tag-badge.revisar { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .tag-badge.compartir { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .tag-badge.desarrollar { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+        .tag-badge.urgente { background: rgba(239, 68, 68, 0.3); color: #f87171; }
+        .tag-badge.referencia { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        .tag-badge.favorito { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+
+        .link-actions {
+            display: flex;
+            gap: 0.5rem;
         }
 
         .btn-delete {
-            background: transparent;
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
-            padding: 6px 12px;
+            padding: 0.4rem 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
             border-radius: 6px;
-            font-size: 0.85em;
             cursor: pointer;
+            font-size: 0.75rem;
             transition: all 0.2s;
         }
 
         .btn-delete:hover {
-            background: #e74c3c;
+            background: var(--danger);
             color: white;
         }
 
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 50px 20px;
-            color: #95a5a6;
-            background: white;
-            border-radius: 12px;
+            padding: 3rem;
+            color: var(--text-secondary);
         }
 
-        .empty-state h3 {
-            margin-bottom: 8px;
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
         }
 
-        .stats {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        /* Date Headers */
+        .date-header {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 1.5rem 0 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
         }
 
-        .stat-card {
-            flex: 1;
-            min-width: 140px;
-            background: white;
-            padding: 18px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(1rem);
+            transition: all 0.3s;
+            z-index: 1000;
         }
 
-        .stat-number {
-            font-size: 2em;
-            font-weight: 700;
-            color: #667eea;
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .stat-label {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-top: 4px;
-        }
-
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 1.6em;
+        /* Responsive */
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
             }
-            .filter-row {
+
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            .filters {
                 flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
             }
         }
     </style>
@@ -276,140 +412,290 @@
     <div class="container">
         <header>
             <h1>🔗 Links App</h1>
-            <p>Tu organizador personal de enlaces con notas</p>
+            <p>Tu gestor de enlaces organizado por fecha y tags</p>
         </header>
 
+        <!-- Stats -->
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number" id="totalLinks">0</div>
-                <div class="stat-label">Total de enlaces</div>
+                <div class="number" id="total-links">0</div>
+                <div class="label">Enlaces</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="totalDays">0</div>
-                <div class="stat-label">Días registrados</div>
+                <div class="number" id="total-days">0</div>
+                <div class="label">Días</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="total-tags">0</div>
+                <div class="label">Tags usados</div>
             </div>
         </div>
 
+        <!-- Add Link Form -->
         <div class="form-section">
-            <h2>➕ Agregar nuevo enlace</h2>
-            <form id="linkForm">
+            <h2>➕ Agregar Nuevo Enlace</h2>
+            <form id="add-form">
                 <div class="form-group">
-                    <label for="url">URL *</label>
-                    <input type="url" id="url" placeholder="https://ejemplo.com" required>
+                    <label for="url">URL del enlace</label>
+                    <input type="text" id="url" placeholder="https://ejemplo.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="note">Nota</label>
-                    <textarea id="note" placeholder="¿De qué se trata este enlace?"></textarea>
+                    <label for="note">Nota descriptiva</label>
+                    <textarea id="note" placeholder="¿De qué trata este enlace?" required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Guardar enlace</button>
+                <div class="form-group">
+                    <label>Tags (selecciona los que apliquen)</label>
+                    <div class="tags-selector">
+                        <input type="checkbox" id="tag-ver-mas-tarde" class="tag-checkbox tag-ver-mas-tarde" value="ver-mas-tarde">
+                        <label for="tag-ver-mas-tarde" class="tag-label">⏰ Ver más tarde</label>
+
+                        <input type="checkbox" id="tag-revisar" class="tag-checkbox tag-revisar" value="revisar">
+                        <label for="tag-revisar" class="tag-label">🔄 Revisar</label>
+
+                        <input type="checkbox" id="tag-compartir" class="tag-checkbox tag-compartir" value="compartir">
+                        <label for="tag-compartir" class="tag-label">📤 Compartir</label>
+
+                        <input type="checkbox" id="tag-desarrollar" class="tag-checkbox tag-desarrollar" value="desarrollar">
+                        <label for="tag-desarrollar" class="tag-label">💡 Desarrollar</label>
+
+                        <input type="checkbox" id="tag-urgente" class="tag-checkbox tag-urgente" value="urgente">
+                        <label for="tag-urgente" class="tag-label">🔥 Urgente</label>
+
+                        <input type="checkbox" id="tag-referencia" class="tag-checkbox tag-referencia" value="referencia">
+                        <label for="tag-referencia" class="tag-label">📚 Referencia</label>
+
+                        <input type="checkbox" id="tag-favorito" class="tag-checkbox tag-favorito" value="favorito">
+                        <label for="tag-favorito" class="tag-label">⭐ Favorito</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">💾 Guardar Enlace</button>
             </form>
         </div>
 
-        <div class="filter-section">
-            <h2>🔍 Buscar y filtrar</h2>
-            <div class="filter-row">
-                <input type="text" id="searchInput" placeholder="Buscar por texto o URL...">
-                <input type="date" id="dateFilter">
-                <button class="btn btn-secondary" id="clearFilters">Limpiar</button>
+        <!-- Filters -->
+        <div class="filters">
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Buscar enlaces...">
+            </div>
+            <div class="filter-tags" id="filter-tags">
+                <button class="filter-tag active" data-tag="">Todos</button>
+                <button class="filter-tag" data-tag="ver-mas-tarde">⏰ Ver más tarde</button>
+                <button class="filter-tag" data-tag="revisar">🔄 Revisar</button>
+                <button class="filter-tag" data-tag="compartir">📤 Compartir</button>
+                <button class="filter-tag" data-tag="desarrollar">💡 Desarrollar</button>
+                <button class="filter-tag" data-tag="urgente">🔥 Urgente</button>
+                <button class="filter-tag" data-tag="referencia">📚 Referencia</button>
+                <button class="filter-tag" data-tag="favorito">⭐ Favorito</button>
             </div>
         </div>
 
-        <div class="links-container" id="linksContainer"></div>
+        <!-- Links List -->
+        <div class="links-list" id="links-list">
+            <div class="empty-state">
+                <div class="icon">📭</div>
+                <p>No hay enlaces guardados todavía</p>
+                <p>Usa el formulario de arriba para agregar tu primer enlace</p>
+            </div>
+        </div>
     </div>
 
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
     <script>
-        const STORAGE_KEY = 'linksApp_data';
+        // State
+        let links = JSON.parse(localStorage.getItem('links-app') || '[]');
+        let currentFilter = '';
+        let searchQuery = '';
 
-        let links = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        // DOM Elements
+        const addForm = document.getElementById('add-form');
+        const linksList = document.getElementById('links-list');
+        const searchInput = document.getElementById('search');
+        const filterTags = document.getElementById('filter-tags');
+        const toast = document.getElementById('toast');
 
-        function saveLinks() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
-        }
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLinks();
+            updateStats();
+        });
 
-        function addLink(url, note) {
-            const now = new Date();
+        // Add Link Form
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            let url = document.getElementById('url').value.trim();
+            const note = document.getElementById('note').value.trim();
+            
+            // Add https:// if missing
+            if (!url.match(/^https?:\/\//)) {
+                url = 'https://' + url;
+            }
+
+            // Get selected tags
+            const tags = [];
+            document.querySelectorAll('.tag-checkbox:checked').forEach(cb => {
+                tags.push(cb.value);
+            });
+
             const link = {
-                id: Date.now().toString(),
+                id: Date.now(),
                 url: url,
                 note: note,
-                date: now.toISOString().split('T')[0],
-                time: now.toTimeString().split(' ')[0]
+                tags: tags,
+                date: new Date().toISOString()
             };
+
             links.unshift(link);
             saveLinks();
-            render();
-        }
+            renderLinks();
+            updateStats();
+            
+            // Reset form
+            addForm.reset();
+            document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = false);
+            
+            showToast('Enlace guardado correctamente');
+        });
 
+        // Search
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase();
+            renderLinks();
+        });
+
+        // Filter Tags
+        filterTags.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-tag')) {
+                document.querySelectorAll('.filter-tag').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.tag;
+                renderLinks();
+            }
+        });
+
+        // Delete Link
         function deleteLink(id) {
             if (confirm('¿Eliminar este enlace?')) {
-                links = links.filter(l => l.id !== id);
+                links = links.filter(link => link.id !== id);
                 saveLinks();
-                render();
+                renderLinks();
+                updateStats();
+                showToast('Enlace eliminado');
             }
         }
 
-        function getFilteredLinks() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const dateFilter = document.getElementById('dateFilter').value;
-
-            return links.filter(link => {
-                const matchesSearch = !searchTerm ||
-                    link.url.toLowerCase().includes(searchTerm) ||
-                    link.note.toLowerCase().includes(searchTerm);
-                const matchesDate = !dateFilter || link.date === dateFilter;
-                return matchesSearch && matchesDate;
-            });
+        // Save to localStorage
+        function saveLinks() {
+            localStorage.setItem('links-app', JSON.stringify(links));
         }
 
-        function render() {
-            const filtered = getFilteredLinks();
-            const container = document.getElementById('linksContainer');
+        // Render Links
+        function renderLinks() {
+            let filtered = links;
 
-            document.getElementById('totalLinks').textContent = links.length;
-            const uniqueDays = new Set(links.map(l => l.date)).size;
-            document.getElementById('totalDays').textContent = uniqueDays;
+            // Filter by tag
+            if (currentFilter) {
+                filtered = filtered.filter(link => link.tags.includes(currentFilter));
+            }
+
+            // Filter by search
+            if (searchQuery) {
+                filtered = filtered.filter(link => 
+                    link.url.toLowerCase().includes(searchQuery) ||
+                    link.note.toLowerCase().includes(searchQuery) ||
+                    link.tags.some(tag => tag.toLowerCase().includes(searchQuery))
+                );
+            }
 
             if (filtered.length === 0) {
-                container.innerHTML = `
+                linksList.innerHTML = `
                     <div class="empty-state">
-                        <h3>📭 No hay enlaces</h3>
-                        <p>Agrega tu primer enlace usando el formulario de arriba.</p>
+                        <div class="icon">🔍</div>
+                        <p>No se encontraron enlaces</p>
+                        <p>${searchQuery || currentFilter ? 'Prueba con otros filtros' : 'Agrega tu primer enlace'}</p>
                     </div>
                 `;
                 return;
             }
 
+            // Group by date
             const grouped = {};
             filtered.forEach(link => {
-                if (!grouped[link.date]) grouped[link.date] = [];
-                grouped[link.date].push(link);
+                const date = new Date(link.date).toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(link);
             });
 
-            const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
-
-            container.innerHTML = sortedDates.map(date => `
-                <div class="date-group">
-                    <div class="date-header">
-                        <span>📅 ${formatDate(date)}</span>
-                        <span class="date-count">${grouped[date].length}</span>
-                    </div>
-                    ${grouped[date].map(link => `
-                        <div class="link-item">
-                            <div class="link-content">
-                                <a href="${link.url}" target="_blank" rel="noopener" class="link-url">${link.url}</a>
-                                ${link.note ? `<div class="link-note">${escapeHtml(link.note)}</div>` : ''}
-                                <div class="link-time">🕐 ${link.time}</div>
+            let html = '';
+            for (const [date, dateLinks] of Object.entries(grouped)) {
+                html += `<div class="date-header">📅 ${date}</div>`;
+                dateLinks.forEach(link => {
+                    html += `
+                        <div class="link-card">
+                            <div class="link-header">
+                                <a href="${link.url}" class="link-url" target="_blank" rel="noopener">${link.url}</a>
+                                <span class="link-date">${formatTime(link.date)}</span>
                             </div>
-                            <button class="btn-delete" onclick="deleteLink('${link.id}')">Eliminar</button>
+                            <p class="link-note">${escapeHtml(link.note)}</p>
+                            ${link.tags.length > 0 ? `
+                                <div class="link-tags">
+                                    ${link.tags.map(tag => `<span class="tag-badge ${tag}">${getTagIcon(tag)} ${formatTag(tag)}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                            <div class="link-actions">
+                                <button class="btn-delete" onclick="deleteLink(${link.id})">🗑️ Eliminar</button>
+                            </div>
                         </div>
-                    `).join('')}
-                </div>
-            `).join('');
+                    `;
+                });
+            }
+
+            linksList.innerHTML = html;
         }
 
-        function formatDate(dateStr) {
-            const [y, m, d] = dateStr.split('-');
-            return `${d}/${m}/${y}`;
+        // Update Stats
+        function updateStats() {
+            const days = new Set(links.map(l => new Date(l.date).toDateString())).size;
+            const tags = new Set(links.flatMap(l => l.tags)).size;
+            
+            document.getElementById('total-links').textContent = links.length;
+            document.getElementById('total-days').textContent = days;
+            document.getElementById('total-tags').textContent = tags;
+        }
+
+        // Show Toast
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Helpers
+        function formatTime(iso) {
+            return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatTag(tag) {
+            return tag.replace(/-/g, ' ');
+        }
+
+        function getTagIcon(tag) {
+            const icons = {
+                'ver-mas-tarde': '⏰',
+                'revisar': '🔄',
+                'compartir': '📤',
+                'desarrollar': '💡',
+                'urgente': '🔥',
+                'referencia': '📚',
+                'favorito': '⭐'
+            };
+            return icons[tag] || '🏷️';
         }
 
         function escapeHtml(text) {
@@ -417,27 +703,6 @@
             div.textContent = text;
             return div.innerHTML;
         }
-
-        document.getElementById('linkForm').addEventListener('submit', e => {
-            e.preventDefault();
-            const url = document.getElementById('url').value.trim();
-            const note = document.getElementById('note').value.trim();
-            if (url) {
-                addLink(url, note);
-                document.getElementById('url').value = '';
-                document.getElementById('note').value = '';
-            }
-        });
-
-        document.getElementById('searchInput').addEventListener('input', render);
-        document.getElementById('dateFilter').addEventListener('change', render);
-        document.getElementById('clearFilters').addEventListener('click', () => {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('dateFilter').value = '';
-            render();
-        });
-
-        render();
     </script>
 </body>
 </html>
