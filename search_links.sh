@@ -2,23 +2,52 @@
 set -e
 
 # =====================================================
-# links-app - buscar enlaces por texto o tag
-# uso: search_links.sh <texto_o_tag> [-t tag]
+# link-vault - buscar enlaces por texto o tag
+# uso: search_links.sh [texto] [-t tag]
 # =====================================================
 
 WORKSPACE="${LINKS_APP_WORKSPACE:-$HOME/workspace/links_app}"
 LINK_DIR="$WORKSPACE/links"
 
-query="${1:-}"
-tag_filter="${2:-}"
+query=""
+tag_filter=""
+
+# leer argumentos con flags (acepta tambien posicionales: texto tag)
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -t|--tag) tag_filter="$2"; shift 2 ;;
+        -h|--help)
+            echo "uso: $0 [texto] [-t <tag>]"
+            echo ""
+            echo "  texto          Buscar en url, nota o tags (insensible a mayusculas)"
+            echo "  -t, --tag      Filtrar por tag exacto"
+            echo "  -h, --help     Mostrar esta ayuda"
+            echo ""
+            echo "ejemplos:"
+            echo "  $0 github                # buscar 'github' en url, nota o tags"
+            echo "  $0 -t urgente            # solo por tag"
+            echo "  $0 tutorial -t ia        # texto + tag"
+            exit 0
+            ;;
+        -*)
+            echo "opcion desconocida: $1" >&2
+            echo "usa '$0 --help' para mas informacion" >&2
+            exit 1
+            ;;
+        *)
+            if [[ -z "$query" ]]; then
+                query="$1"
+            elif [[ -z "$tag_filter" ]]; then
+                tag_filter="$1"
+            fi
+            shift
+            ;;
+    esac
+done
 
 if [[ -z "$query" && -z "$tag_filter" ]]; then
-    echo "uso: $0 <texto> [-t <tag>]"
-    echo ""
-    echo "ejemplos:"
-    echo "  $0 github                # buscar 'github' en url, nota o tags"
-    echo "  $0 -t urgente            # buscar por tag especifico"
-    echo "  $0 tutorial -t ia        # texto + tag"
+    echo "uso: $0 [texto] [-t <tag>]"
+    echo "usa '$0 --help' para mas informacion"
     exit 0
 fi
 

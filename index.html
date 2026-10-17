@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Links App - Gestor de Enlaces</title>
+    <title>Link Vault - Gestor de Enlaces</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -162,20 +162,7 @@
             border-color: var(--primary);
         }
 
-        .tag-checkbox:checked + .tag-label {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
         /* Tag colors */
-        .tag-ver-mas-tarde:checked + .tag-label { background: var(--danger); border-color: var(--danger); }
-        .tag-revisar:checked + .tag-label { background: var(--warning); border-color: var(--warning); }
-        .tag-compartir:checked + .tag-label { background: var(--success); border-color: var(--success); }
-        .tag-desarrollar:checked + .tag-label { background: var(--primary); border-color: var(--primary); }
-        .tag-urgente:checked + .tag-label { background: var(--danger); border-color: var(--danger); }
-        .tag-referencia:checked + .tag-label { background: #8b5cf6; border-color: #8b5cf6; }
-        .tag-favorito:checked + .tag-label { background: #ec4899; border-color: #ec4899; }
 
         .btn {
             padding: 0.75rem 1.5rem;
@@ -317,14 +304,6 @@
             font-weight: 500;
         }
 
-        .tag-badge.ver-mas-tarde { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-        .tag-badge.revisar { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-        .tag-badge.compartir { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-        .tag-badge.desarrollar { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
-        .tag-badge.urgente { background: rgba(239, 68, 68, 0.3); color: #f87171; }
-        .tag-badge.referencia { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
-        .tag-badge.favorito { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
-
         .link-actions {
             display: flex;
             gap: 0.5rem;
@@ -344,6 +323,62 @@
         .btn-delete:hover {
             background: var(--danger);
             color: white;
+        }
+
+
+        /* Edit button */
+        .btn-edit {
+            padding: 0.4rem 0.75rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            color: #818cf8;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Cancel edit button */
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+            color: var(--text);
+        }
+
+        /* Backup tools */
+        .tools {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-tool {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-tool:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         /* Empty State */
@@ -411,7 +446,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔗 Links App</h1>
+            <h1>🔗 Link Vault</h1>
             <p>Tu gestor de enlaces organizado por fecha y tags</p>
         </header>
 
@@ -445,30 +480,10 @@
                 </div>
                 <div class="form-group">
                     <label>Tags (selecciona los que apliquen)</label>
-                    <div class="tags-selector">
-                        <input type="checkbox" id="tag-ver-mas-tarde" class="tag-checkbox tag-ver-mas-tarde" value="ver-mas-tarde">
-                        <label for="tag-ver-mas-tarde" class="tag-label">⏰ Ver más tarde</label>
-
-                        <input type="checkbox" id="tag-revisar" class="tag-checkbox tag-revisar" value="revisar">
-                        <label for="tag-revisar" class="tag-label">🔄 Revisar</label>
-
-                        <input type="checkbox" id="tag-compartir" class="tag-checkbox tag-compartir" value="compartir">
-                        <label for="tag-compartir" class="tag-label">📤 Compartir</label>
-
-                        <input type="checkbox" id="tag-desarrollar" class="tag-checkbox tag-desarrollar" value="desarrollar">
-                        <label for="tag-desarrollar" class="tag-label">💡 Desarrollar</label>
-
-                        <input type="checkbox" id="tag-urgente" class="tag-checkbox tag-urgente" value="urgente">
-                        <label for="tag-urgente" class="tag-label">🔥 Urgente</label>
-
-                        <input type="checkbox" id="tag-referencia" class="tag-checkbox tag-referencia" value="referencia">
-                        <label for="tag-referencia" class="tag-label">📚 Referencia</label>
-
-                        <input type="checkbox" id="tag-favorito" class="tag-checkbox tag-favorito" value="favorito">
-                        <label for="tag-favorito" class="tag-label">⭐ Favorito</label>
-                    </div>
+                    <div class="tags-selector" id="tags-selector"></div>
                 </div>
-                <button type="submit" class="btn btn-primary">💾 Guardar Enlace</button>
+                <button type="submit" id="submit-btn" class="btn btn-primary">💾 Guardar Enlace</button>
+                <button type="button" id="cancel-edit" class="btn btn-secondary" style="display:none" onclick="cancelEdit()">Cancelar edición</button>
             </form>
         </div>
 
@@ -479,14 +494,14 @@
             </div>
             <div class="filter-tags" id="filter-tags">
                 <button class="filter-tag active" data-tag="">Todos</button>
-                <button class="filter-tag" data-tag="ver-mas-tarde">⏰ Ver más tarde</button>
-                <button class="filter-tag" data-tag="revisar">🔄 Revisar</button>
-                <button class="filter-tag" data-tag="compartir">📤 Compartir</button>
-                <button class="filter-tag" data-tag="desarrollar">💡 Desarrollar</button>
-                <button class="filter-tag" data-tag="urgente">🔥 Urgente</button>
-                <button class="filter-tag" data-tag="referencia">📚 Referencia</button>
-                <button class="filter-tag" data-tag="favorito">⭐ Favorito</button>
             </div>
+        </div>
+
+        <!-- Backup tools -->
+        <div class="tools">
+            <button class="btn-tool" onclick="exportLinks()">📥 Exportar JSON</button>
+            <button class="btn-tool" onclick="document.getElementById('import-file').click()">📤 Importar JSON</button>
+            <input type="file" id="import-file" accept="application/json,.json" style="display:none">
         </div>
 
         <!-- Links List -->
@@ -503,10 +518,27 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // State
-        let links = JSON.parse(localStorage.getItem('links-app') || '[]');
+        // Tags: single source of truth (form, filters and badges are generated from here)
+        const TAGS = [
+            { id: 'ver-mas-tarde', label: 'Ver más tarde', icon: '⏰', color: '#ef4444', soft: 'rgba(239,68,68,0.2)',  text: '#f87171' },
+            { id: 'revisar',       label: 'Revisar',        icon: '🔄', color: '#f59e0b', soft: 'rgba(245,158,11,0.2)', text: '#fbbf24' },
+            { id: 'compartir',      label: 'Compartir',      icon: '📤', color: '#10b981', soft: 'rgba(16,185,129,0.2)', text: '#34d399' },
+            { id: 'desarrollar',    label: 'Desarrollar',    icon: '💡', color: '#6366f1', soft: 'rgba(99,102,241,0.2)',  text: '#818cf8' },
+            { id: 'urgente',        label: 'Urgente',        icon: '🔥', color: '#ef4444', soft: 'rgba(239,68,68,0.3)',  text: '#f87171' },
+            { id: 'referencia',     label: 'Referencia',     icon: '📚', color: '#8b5cf6', soft: 'rgba(139,92,246,0.2)', text: '#a78bfa' },
+            { id: 'favorito',       label: 'Favorito',       icon: '⭐', color: '#ec4899', soft: 'rgba(236,72,153,0.2)', text: '#f472b6' },
+        ];
+
+        function tagInfo(id) {
+            return TAGS.find(t => t.id === id) ||
+                { id: id, label: id.replace(/-/g, ' '), icon: '🏷️', color: '#64748b', soft: 'rgba(100,116,139,0.2)', text: '#94a3b8' };
+        }
+
+        // State (migrates the old 'links-app' key once)
+        let links = JSON.parse(localStorage.getItem('link-vault') || localStorage.getItem('links-app') || '[]');
         let currentFilter = '';
         let searchQuery = '';
+        let editingId = null;
 
         // DOM Elements
         const addForm = document.getElementById('add-form');
@@ -517,17 +549,58 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            renderTagSelectors();
             renderLinks();
             updateStats();
+            document.getElementById('import-file').addEventListener('change', (e) => {
+                if (e.target.files[0]) importLinks(e.target.files[0]);
+                e.target.value = '';
+            });
         });
 
-        // Add Link Form
+        // Generate tag checkboxes and filter buttons from TAGS
+        function renderTagSelectors() {
+            const sel = document.getElementById('tags-selector');
+            sel.innerHTML = TAGS.map(t => `
+                <input type="checkbox" id="tag-${t.id}" class="tag-checkbox" value="${t.id}">
+                <label for="tag-${t.id}" class="tag-label">${t.icon} ${t.label}</label>`).join('');
+            sel.querySelectorAll('.tag-checkbox').forEach(cb => {
+                cb.addEventListener('change', paintTagLabels);
+            });
+            TAGS.forEach(t => {
+                const b = document.createElement('button');
+                b.className = 'filter-tag';
+                b.dataset.tag = t.id;
+                b.textContent = `${t.icon} ${t.label}`;
+                filterTags.appendChild(b);
+            });
+            paintTagLabels();
+        }
+
+        // Paint selected tag labels with their color
+        function paintTagLabels() {
+            document.querySelectorAll('#tags-selector .tag-checkbox').forEach(cb => {
+                const label = cb.nextElementSibling;
+                const t = tagInfo(cb.value);
+                if (cb.checked) {
+                    label.style.background = t.color;
+                    label.style.borderColor = t.color;
+                    label.style.color = '#fff';
+                } else {
+                    label.style.background = '';
+                    label.style.borderColor = '';
+                    label.style.color = '';
+                }
+            });
+        }
+
+        // Add / Edit Link Form
         addForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
+
             let url = document.getElementById('url').value.trim();
             const note = document.getElementById('note').value.trim();
-            
+
             // Add https:// if missing
             if (!url.match(/^https?:\/\//)) {
                 url = 'https://' + url;
@@ -539,25 +612,105 @@
                 tags.push(cb.value);
             });
 
-            const link = {
-                id: Date.now(),
-                url: url,
-                note: note,
-                tags: tags,
-                date: new Date().toISOString()
-            };
+            if (editingId !== null) {
+                const link = links.find(l => l.id === editingId);
+                if (link) {
+                    link.url = url;
+                    link.note = note;
+                    link.tags = tags;
+                    showToast('Enlace actualizado');
+                }
+                cancelEdit();
+            } else {
+                const link = {
+                    id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
+                    url: url,
+                    note: note,
+                    tags: tags,
+                    date: new Date().toISOString()
+                };
+                links.unshift(link);
+                showToast('Enlace guardado correctamente');
+            }
 
-            links.unshift(link);
             saveLinks();
             renderLinks();
             updateStats();
-            
+
             // Reset form
             addForm.reset();
-            document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = false);
-            
-            showToast('Enlace guardado correctamente');
+            paintTagLabels();
         });
+
+        // Edit Link: preload the form
+        function editLink(id) {
+            const link = links.find(l => l.id === id);
+            if (!link) return;
+            document.getElementById('url').value = link.url;
+            document.getElementById('note').value = link.note;
+            document.querySelectorAll('.tag-checkbox').forEach(cb => {
+                cb.checked = link.tags.includes(cb.value);
+            });
+            paintTagLabels();
+            editingId = id;
+            document.getElementById('submit-btn').textContent = '💾 Guardar cambios';
+            document.getElementById('cancel-edit').style.display = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            addForm.reset();
+            paintTagLabels();
+            document.getElementById('submit-btn').textContent = '💾 Guardar Enlace';
+            document.getElementById('cancel-edit').style.display = 'none';
+        }
+
+        // Export links to a JSON file
+        function exportLinks() {
+            const blob = new Blob([JSON.stringify(links, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'link-vault-' + new Date().toISOString().slice(0, 10) + '.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            showToast('Respaldo descargado');
+        }
+
+        // Import links from a JSON file
+        function importLinks(file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(reader.result);
+                    if (!Array.isArray(data)) throw new Error('formato inválido');
+                    const ids = new Set(links.map(l => l.id));
+                    let added = 0;
+                    data.forEach(l => {
+                        if (!l || typeof l.url !== 'string') return;
+                        if (l.id == null || ids.has(l.id)) {
+                            l.id = Date.now() * 1000 + Math.floor(Math.random() * 1000);
+                        }
+                        ids.add(l.id);
+                        links.push({
+                            id: l.id,
+                            url: l.url,
+                            note: l.note || '',
+                            tags: Array.isArray(l.tags) ? l.tags : [],
+                            date: l.date || new Date().toISOString()
+                        });
+                        added++;
+                    });
+                    saveLinks();
+                    renderLinks();
+                    updateStats();
+                    showToast(added + ' enlace(s) importados');
+                } catch (err) {
+                    showToast('Archivo inválido');
+                }
+            };
+            reader.readAsText(file);
+        }
 
         // Search
         searchInput.addEventListener('input', (e) => {
@@ -588,7 +741,8 @@
 
         // Save to localStorage
         function saveLinks() {
-            localStorage.setItem('links-app', JSON.stringify(links));
+            localStorage.setItem('link-vault', JSON.stringify(links));
+            localStorage.removeItem('links-app');
         }
 
         // Render Links
@@ -602,7 +756,7 @@
 
             // Filter by search
             if (searchQuery) {
-                filtered = filtered.filter(link => 
+                filtered = filtered.filter(link =>
                     link.url.toLowerCase().includes(searchQuery) ||
                     link.note.toLowerCase().includes(searchQuery) ||
                     link.tags.some(tag => tag.toLowerCase().includes(searchQuery))
@@ -645,10 +799,14 @@
                             <p class="link-note">${escapeHtml(link.note)}</p>
                             ${link.tags.length > 0 ? `
                                 <div class="link-tags">
-                                    ${link.tags.map(tag => `<span class="tag-badge ${tag}">${getTagIcon(tag)} ${formatTag(tag)}</span>`).join('')}
+                                    ${link.tags.map(t => {
+                                        const ti = tagInfo(t);
+                                        return `<span class="tag-badge" style="background:${ti.soft};color:${ti.text}">${ti.icon} ${ti.label}</span>`;
+                                    }).join('')}
                                 </div>
                             ` : ''}
                             <div class="link-actions">
+                                <button class="btn-edit" onclick="editLink(${link.id})">✏️ Editar</button>
                                 <button class="btn-delete" onclick="deleteLink(${link.id})">🗑️ Eliminar</button>
                             </div>
                         </div>
@@ -663,7 +821,7 @@
         function updateStats() {
             const days = new Set(links.map(l => new Date(l.date).toDateString())).size;
             const tags = new Set(links.flatMap(l => l.tags)).size;
-            
+
             document.getElementById('total-links').textContent = links.length;
             document.getElementById('total-days').textContent = days;
             document.getElementById('total-tags').textContent = tags;
@@ -679,23 +837,6 @@
         // Helpers
         function formatTime(iso) {
             return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        function formatTag(tag) {
-            return tag.replace(/-/g, ' ');
-        }
-
-        function getTagIcon(tag) {
-            const icons = {
-                'ver-mas-tarde': '⏰',
-                'revisar': '🔄',
-                'compartir': '📤',
-                'desarrollar': '💡',
-                'urgente': '🔥',
-                'referencia': '📚',
-                'favorito': '⭐'
-            };
-            return icons[tag] || '🏷️';
         }
 
         function escapeHtml(text) {

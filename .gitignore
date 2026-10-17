@@ -1,6 +1,4 @@
-# Compilados / ejecutables
-*.sh
-!*.sh.bak
+# Datos locales (se crean al usar la app)
 links/
 *.txt
 

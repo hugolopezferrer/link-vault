@@ -2,7 +2,7 @@
 set -e
 
 # =====================================================
-# links-app - script para agregar un nuevo enlace
+# link-vault - script para agregar un nuevo enlace
 # tags: cualquier tag personalizado (separados por coma)
 # =====================================================
 
@@ -85,15 +85,20 @@ fi
 
 # obtener fecha y hora
 fecha=$(date +%F)   # 2026-08-28
-hora=$(date +%H%M%S)
+base=$(date +%H%M%S%N)
 timestamp=$(date "+%Y-%m-%d - %H:%M:%S")
 
 # crear directorio por fecha
 dir="$LINK_DIR/$fecha"
 mkdir -p "$dir"
 
-# crear archivo unico por timestamp
-file="$dir/link_$hora.txt"
+# crear archivo unico (nanosegundos + contador anti-colision)
+file="$dir/link_$base.txt"
+n=1
+while [[ -e "$file" ]]; do
+    file="$dir/link_${base}_$n.txt"
+    n=$((n + 1))
+done
 
 # escribir contenido
 {
