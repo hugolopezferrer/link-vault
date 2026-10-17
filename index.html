@@ -58,6 +58,32 @@
             color: var(--text-secondary);
         }
 
+        /* Language toggle */
+        .lang-toggle {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .lang-toggle button {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-toggle button.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            font-weight: 700;
+        }
+
         /* Stats */
         .stats {
             display: flex;
@@ -446,51 +472,55 @@
 <body>
     <div class="container">
         <header>
+            <div class="lang-toggle">
+                <button data-lang="es" class="active" onclick="setLang('es')">🇪🇸 ES</button>
+                <button data-lang="en" onclick="setLang('en')">🇺🇸 EN</button>
+            </div>
             <h1>🔗 Link Vault</h1>
-            <p>Tu gestor de enlaces organizado por fecha y tags</p>
+            <p data-i18n="subtitle">Tu gestor de enlaces organizado por fecha y tags</p>
         </header>
 
         <!-- Stats -->
         <div class="stats">
             <div class="stat-card">
                 <div class="number" id="total-links">0</div>
-                <div class="label">Enlaces</div>
+                <div class="label" data-i18n="statLinks">Enlaces</div>
             </div>
             <div class="stat-card">
                 <div class="number" id="total-days">0</div>
-                <div class="label">Días</div>
+                <div class="label" data-i18n="statDays">Días</div>
             </div>
             <div class="stat-card">
                 <div class="number" id="total-tags">0</div>
-                <div class="label">Tags usados</div>
+                <div class="label" data-i18n="statTags">Tags usados</div>
             </div>
         </div>
 
         <!-- Add Link Form -->
         <div class="form-section">
-            <h2>➕ Agregar Nuevo Enlace</h2>
+            <h2 data-i18n="formTitle">➕ Agregar Nuevo Enlace</h2>
             <form id="add-form">
                 <div class="form-group">
-                    <label for="url">URL del enlace</label>
-                    <input type="text" id="url" placeholder="https://ejemplo.com" required>
+                    <label for="url" data-i18n="urlLabel">URL del enlace</label>
+                    <input type="text" id="url" data-i18n-ph="urlPh" placeholder="https://ejemplo.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="note">Nota descriptiva</label>
-                    <textarea id="note" placeholder="¿De qué trata este enlace?" required></textarea>
+                    <label for="note" data-i18n="noteLabel">Nota descriptiva</label>
+                    <textarea id="note" data-i18n-ph="notePh" placeholder="¿De qué trata este enlace?" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Tags (selecciona los que apliquen)</label>
+                    <label data-i18n="tagsLabel">Tags (selecciona los que apliquen)</label>
                     <div class="tags-selector" id="tags-selector"></div>
                 </div>
                 <button type="submit" id="submit-btn" class="btn btn-primary">💾 Guardar Enlace</button>
-                <button type="button" id="cancel-edit" class="btn btn-secondary" style="display:none" onclick="cancelEdit()">Cancelar edición</button>
+                <button type="button" id="cancel-edit" class="btn btn-secondary" style="display:none" data-i18n="cancelEdit" onclick="cancelEdit()">Cancelar edición</button>
             </form>
         </div>
 
         <!-- Filters -->
         <div class="filters">
             <div class="search-box">
-                <input type="text" id="search" placeholder="Buscar enlaces...">
+                <input type="text" id="search" data-i18n-ph="searchPh" placeholder="Buscar enlaces...">
             </div>
             <div class="filter-tags" id="filter-tags">
                 <button class="filter-tag active" data-tag="">Todos</button>
@@ -499,8 +529,8 @@
 
         <!-- Backup tools -->
         <div class="tools">
-            <button class="btn-tool" onclick="exportLinks()">📥 Exportar JSON</button>
-            <button class="btn-tool" onclick="document.getElementById('import-file').click()">📤 Importar JSON</button>
+            <button class="btn-tool" data-i18n="exportJson" onclick="exportLinks()">📥 Exportar JSON</button>
+            <button class="btn-tool" data-i18n="importJson" onclick="document.getElementById('import-file').click()">📤 Importar JSON</button>
             <input type="file" id="import-file" accept="application/json,.json" style="display:none">
         </div>
 
@@ -508,8 +538,8 @@
         <div class="links-list" id="links-list">
             <div class="empty-state">
                 <div class="icon">📭</div>
-                <p>No hay enlaces guardados todavía</p>
-                <p>Usa el formulario de arriba para agregar tu primer enlace</p>
+                <p data-i18n="emptyTitle">No hay enlaces guardados todavía</p>
+                <p data-i18n="emptyHint">Usa el formulario de arriba para agregar tu primer enlace</p>
             </div>
         </div>
     </div>
@@ -520,18 +550,110 @@
     <script>
         // Tags: single source of truth (form, filters and badges are generated from here)
         const TAGS = [
-            { id: 'ver-mas-tarde', label: 'Ver más tarde', icon: '⏰', color: '#ef4444', soft: 'rgba(239,68,68,0.2)',  text: '#f87171' },
-            { id: 'revisar',       label: 'Revisar',        icon: '🔄', color: '#f59e0b', soft: 'rgba(245,158,11,0.2)', text: '#fbbf24' },
-            { id: 'compartir',      label: 'Compartir',      icon: '📤', color: '#10b981', soft: 'rgba(16,185,129,0.2)', text: '#34d399' },
-            { id: 'desarrollar',    label: 'Desarrollar',    icon: '💡', color: '#6366f1', soft: 'rgba(99,102,241,0.2)',  text: '#818cf8' },
-            { id: 'urgente',        label: 'Urgente',        icon: '🔥', color: '#ef4444', soft: 'rgba(239,68,68,0.3)',  text: '#f87171' },
-            { id: 'referencia',     label: 'Referencia',     icon: '📚', color: '#8b5cf6', soft: 'rgba(139,92,246,0.2)', text: '#a78bfa' },
-            { id: 'favorito',       label: 'Favorito',       icon: '⭐', color: '#ec4899', soft: 'rgba(236,72,153,0.2)', text: '#f472b6' },
+            { id: 'ver-mas-tarde', label: 'Ver más tarde', label_en: 'Read later', icon: '⏰', color: '#ef4444', soft: 'rgba(239,68,68,0.2)',  text: '#f87171' },
+            { id: 'revisar',       label: 'Revisar',        label_en: 'Review',    icon: '🔄', color: '#f59e0b', soft: 'rgba(245,158,11,0.2)', text: '#fbbf24' },
+            { id: 'compartir',      label: 'Compartir',      label_en: 'Share',     icon: '📤', color: '#10b981', soft: 'rgba(16,185,129,0.2)', text: '#34d399' },
+            { id: 'desarrollar',    label: 'Desarrollar',    label_en: 'Develop',   icon: '💡', color: '#6366f1', soft: 'rgba(99,102,241,0.2)',  text: '#818cf8' },
+            { id: 'urgente',        label: 'Urgente',        label_en: 'Urgent',    icon: '🔥', color: '#ef4444', soft: 'rgba(239,68,68,0.3)',  text: '#f87171' },
+            { id: 'referencia',     label: 'Referencia',     label_en: 'Reference', icon: '📚', color: '#8b5cf6', soft: 'rgba(139,92,246,0.2)', text: '#a78bfa' },
+            { id: 'favorito',       label: 'Favorito',       label_en: 'Favorite',  icon: '⭐', color: '#ec4899', soft: 'rgba(236,72,153,0.2)', text: '#f472b6' },
         ];
 
         function tagInfo(id) {
             return TAGS.find(t => t.id === id) ||
                 { id: id, label: id.replace(/-/g, ' '), icon: '🏷️', color: '#64748b', soft: 'rgba(100,116,139,0.2)', text: '#94a3b8' };
+        }
+
+        // ---- I18N: all visible strings (tag ids never change; only display labels translate) ----
+        const STR = {
+            es: {
+                title: 'Link Vault - Gestor de Enlaces',
+                subtitle: 'Tu gestor de enlaces organizado por fecha y tags',
+                statLinks: 'Enlaces', statDays: 'Días', statTags: 'Tags usados',
+                formTitle: '➕ Agregar Nuevo Enlace',
+                urlLabel: 'URL del enlace', urlPh: 'https://ejemplo.com',
+                noteLabel: 'Nota descriptiva', notePh: '¿De qué trata este enlace?',
+                tagsLabel: 'Tags (selecciona los que apliquen)',
+                saveLink: '💾 Guardar Enlace', saveChanges: '💾 Guardar cambios',
+                cancelEdit: 'Cancelar edición',
+                searchPh: 'Buscar enlaces...', all: 'Todos',
+                exportJson: '📥 Exportar JSON', importJson: '📤 Importar JSON',
+                emptyTitle: 'No hay enlaces guardados todavía',
+                emptyHint: 'Usa el formulario de arriba para agregar tu primer enlace',
+                noResults: 'No se encontraron enlaces',
+                tryFilters: 'Prueba con otros filtros',
+                addFirst: 'Agrega tu primer enlace',
+                edit: '✏️ Editar', del: '🗑️ Eliminar',
+                toastUpdated: 'Enlace actualizado',
+                toastSaved: 'Enlace guardado correctamente',
+                toastBackup: 'Respaldo descargado',
+                toastInvalid: 'Archivo inválido',
+                importedSuffix: 'enlace(s) importados',
+                toastDeleted: 'Enlace eliminado',
+                confirmDelete: '¿Eliminar este enlace?',
+                errFormat: 'formato inválido',
+                locale: 'es-ES'
+            },
+            en: {
+                title: 'Link Vault - Link Manager',
+                subtitle: 'Your link manager, organized by date and tags',
+                statLinks: 'Links', statDays: 'Days', statTags: 'Tags used',
+                formTitle: '➕ Add New Link',
+                urlLabel: 'Link URL', urlPh: 'https://example.com',
+                noteLabel: 'Description', notePh: "What's this link about?",
+                tagsLabel: 'Tags (select all that apply)',
+                saveLink: '💾 Save Link', saveChanges: '💾 Save changes',
+                cancelEdit: 'Cancel editing',
+                searchPh: 'Search links...', all: 'All',
+                exportJson: '📥 Export JSON', importJson: '📤 Import JSON',
+                emptyTitle: 'No links saved yet',
+                emptyHint: 'Use the form above to add your first link',
+                noResults: 'No links found',
+                tryFilters: 'Try different filters',
+                addFirst: 'Add your first link',
+                edit: '✏️ Edit', del: '🗑️ Delete',
+                toastUpdated: 'Link updated',
+                toastSaved: 'Link saved',
+                toastBackup: 'Backup downloaded',
+                toastInvalid: 'Invalid file',
+                importedSuffix: 'link(s) imported',
+                toastDeleted: 'Link deleted',
+                confirmDelete: 'Delete this link?',
+                errFormat: 'invalid format',
+                locale: 'en-US'
+            }
+        };
+
+        let lang = localStorage.getItem('link-vault-lang') || 'es';
+
+        function t(key) {
+            const v = STR[lang][key];
+            return v !== undefined ? v : key;
+        }
+
+        // Display label for a tag: internal id stays the same, only the label translates
+        function tagLabel(tag) {
+            const info = typeof tag === 'string' ? tagInfo(tag) : tag;
+            return lang === 'es' ? info.label : (info.label_en || info.label);
+        }
+
+        function setLang(l) {
+            lang = l;
+            localStorage.setItem('link-vault-lang', l);
+            document.documentElement.lang = l;
+            document.querySelectorAll('.lang-toggle button').forEach(b =>
+                b.classList.toggle('active', b.dataset.lang === l));
+            applyI18n();
+        }
+
+        function applyI18n() {
+            document.title = t('title');
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+            document.getElementById('submit-btn').textContent = t(editingId !== null ? 'saveChanges' : 'saveLink');
+            document.getElementById('cancel-edit').textContent = t('cancelEdit');
+            renderTagSelectors();
+            renderLinks();
         }
 
         // State (migrates the old 'links-app' key once)
@@ -549,8 +671,7 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            renderTagSelectors();
-            renderLinks();
+            setLang(lang);
             updateStats();
             document.getElementById('import-file').addEventListener('change', (e) => {
                 if (e.target.files[0]) importLinks(e.target.files[0]);
@@ -558,20 +679,28 @@
             });
         });
 
-        // Generate tag checkboxes and filter buttons from TAGS
+        // Generate tag checkboxes and filter buttons from TAGS (re-runnable: keeps checked tags and active filter)
         function renderTagSelectors() {
             const sel = document.getElementById('tags-selector');
+            const checked = new Set([...sel.querySelectorAll('.tag-checkbox:checked')].map(cb => cb.value));
             sel.innerHTML = TAGS.map(t => `
-                <input type="checkbox" id="tag-${t.id}" class="tag-checkbox" value="${t.id}">
-                <label for="tag-${t.id}" class="tag-label">${t.icon} ${t.label}</label>`).join('');
+                <input type="checkbox" id="tag-${t.id}" class="tag-checkbox" value="${t.id}"${checked.has(t.id) ? ' checked' : ''}>
+                <label for="tag-${t.id}" class="tag-label">${t.icon} ${tagLabel(t)}</label>`).join('');
             sel.querySelectorAll('.tag-checkbox').forEach(cb => {
                 cb.addEventListener('change', paintTagLabels);
             });
-            TAGS.forEach(t => {
+            // Rebuild filter buttons from scratch (keeps the active filter)
+            filterTags.innerHTML = '';
+            const all = document.createElement('button');
+            all.className = 'filter-tag' + (currentFilter === '' ? ' active' : '');
+            all.dataset.tag = '';
+            all.textContent = t('all');
+            filterTags.appendChild(all);
+            TAGS.forEach(tg => {
                 const b = document.createElement('button');
-                b.className = 'filter-tag';
-                b.dataset.tag = t.id;
-                b.textContent = `${t.icon} ${t.label}`;
+                b.className = 'filter-tag' + (currentFilter === tg.id ? ' active' : '');
+                b.dataset.tag = tg.id;
+                b.textContent = `${tg.icon} ${tagLabel(tg)}`;
                 filterTags.appendChild(b);
             });
             paintTagLabels();
@@ -618,7 +747,7 @@
                     link.url = url;
                     link.note = note;
                     link.tags = tags;
-                    showToast('Enlace actualizado');
+                    showToast(t('toastUpdated'));
                 }
                 cancelEdit();
             } else {
@@ -630,7 +759,7 @@
                     date: new Date().toISOString()
                 };
                 links.unshift(link);
-                showToast('Enlace guardado correctamente');
+                showToast(t('toastSaved'));
             }
 
             saveLinks();
@@ -653,7 +782,7 @@
             });
             paintTagLabels();
             editingId = id;
-            document.getElementById('submit-btn').textContent = '💾 Guardar cambios';
+            document.getElementById('submit-btn').textContent = t('saveChanges');
             document.getElementById('cancel-edit').style.display = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -662,7 +791,7 @@
             editingId = null;
             addForm.reset();
             paintTagLabels();
-            document.getElementById('submit-btn').textContent = '💾 Guardar Enlace';
+            document.getElementById('submit-btn').textContent = t('saveLink');
             document.getElementById('cancel-edit').style.display = 'none';
         }
 
@@ -674,7 +803,7 @@
             a.download = 'link-vault-' + new Date().toISOString().slice(0, 10) + '.json';
             a.click();
             URL.revokeObjectURL(a.href);
-            showToast('Respaldo descargado');
+            showToast(t('toastBackup'));
         }
 
         // Import links from a JSON file
@@ -683,7 +812,7 @@
             reader.onload = () => {
                 try {
                     const data = JSON.parse(reader.result);
-                    if (!Array.isArray(data)) throw new Error('formato inválido');
+                    if (!Array.isArray(data)) throw new Error(t('errFormat'));
                     const ids = new Set(links.map(l => l.id));
                     let added = 0;
                     data.forEach(l => {
@@ -704,9 +833,9 @@
                     saveLinks();
                     renderLinks();
                     updateStats();
-                    showToast(added + ' enlace(s) importados');
+                    showToast(added + ' ' + t('importedSuffix'));
                 } catch (err) {
-                    showToast('Archivo inválido');
+                    showToast(t('toastInvalid'));
                 }
             };
             reader.readAsText(file);
@@ -730,12 +859,12 @@
 
         // Delete Link
         function deleteLink(id) {
-            if (confirm('¿Eliminar este enlace?')) {
+            if (confirm(t('confirmDelete'))) {
                 links = links.filter(link => link.id !== id);
                 saveLinks();
                 renderLinks();
                 updateStats();
-                showToast('Enlace eliminado');
+                showToast(t('toastDeleted'));
             }
         }
 
@@ -767,8 +896,8 @@
                 linksList.innerHTML = `
                     <div class="empty-state">
                         <div class="icon">🔍</div>
-                        <p>No se encontraron enlaces</p>
-                        <p>${searchQuery || currentFilter ? 'Prueba con otros filtros' : 'Agrega tu primer enlace'}</p>
+                        <p>${t('noResults')}</p>
+                        <p>${searchQuery || currentFilter ? t('tryFilters') : t('addFirst')}</p>
                     </div>
                 `;
                 return;
@@ -777,7 +906,7 @@
             // Group by date
             const grouped = {};
             filtered.forEach(link => {
-                const date = new Date(link.date).toLocaleDateString('es-ES', {
+                const date = new Date(link.date).toLocaleDateString(t('locale'), {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit'
@@ -799,15 +928,15 @@
                             <p class="link-note">${escapeHtml(link.note)}</p>
                             ${link.tags.length > 0 ? `
                                 <div class="link-tags">
-                                    ${link.tags.map(t => {
-                                        const ti = tagInfo(t);
-                                        return `<span class="tag-badge" style="background:${ti.soft};color:${ti.text}">${ti.icon} ${ti.label}</span>`;
+                                    ${link.tags.map(tg => {
+                                        const ti = tagInfo(tg);
+                                        return `<span class="tag-badge" style="background:${ti.soft};color:${ti.text}">${ti.icon} ${tagLabel(ti)}</span>`;
                                     }).join('')}
                                 </div>
                             ` : ''}
                             <div class="link-actions">
-                                <button class="btn-edit" onclick="editLink(${link.id})">✏️ Editar</button>
-                                <button class="btn-delete" onclick="deleteLink(${link.id})">🗑️ Eliminar</button>
+                                <button class="btn-edit" onclick="editLink(${link.id})">${t('edit')}</button>
+                                <button class="btn-delete" onclick="deleteLink(${link.id})">${t('del')}</button>
                             </div>
                         </div>
                     `;
@@ -836,7 +965,7 @@
 
         // Helpers
         function formatTime(iso) {
-            return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            return new Date(iso).toLocaleTimeString(t('locale'), { hour: '2-digit', minute: '2-digit' });
         }
 
         function escapeHtml(text) {
