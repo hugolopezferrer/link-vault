@@ -169,6 +169,22 @@ The page lets you add and **edit** links with a visual tag picker, search live, 
 > [!IMPORTANT]
 > The web page and the terminal scripts **do not share data**. The page saves in your browser (localStorage); the scripts save text files on disk. A link added in one will not appear in the other. Pick the one you like and stick with it.
 
+## Where your data lives
+
+Honest warning first: **this app has no database.** Nothing is sent to any server. Here's exactly where your links go:
+
+- **Web page:** inside your browser (localStorage), on that device. They survive restarts and updates — but they are gone if you clear your browser data, use incognito mode, or uninstall the browser.
+- **Terminal scripts:** real text files on your computer, in `~/workspace/links_app/links/YYYY-MM-DD/` (or wherever `$LINKS_APP_WORKSPACE` points). Those are permanent — copy them, back them up, sync them with Drive like any file.
+
+**Recommendation:** export your backup regularly. The web page has a 📥 Export JSON button — download the file and keep it wherever you keep important things (Drive, a folder, a USB stick). If anything ever happens, 📤 Import brings it all back.
+
+### Install it as an app
+
+Link Vault works in the browser, but you can give it its own icon:
+
+- **On your phone:** open the page in Chrome → menu ⋮ → "Add to Home screen" (or "Install app"). The Link Vault icon appears on your home screen and opens full-screen, like any app.
+- **On desktop:** in Chrome, Edge or Brave → menu → "Save and share" → "Create shortcut" → check "Open as window". You get a Link Vault icon on your desktop/taskbar that opens in its own window.
+
 ## Tags
 
 Seven preset tags to start with:

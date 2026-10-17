@@ -167,6 +167,22 @@ La página permite agregar y **editar** enlaces con selector visual de tags, bus
 > [!IMPORTANT]
 > La página web y los scripts de terminal **no comparten datos**. La página guarda en tu navegador (localStorage); los scripts guardan archivos de texto en el disco. Un enlace agregado en uno no aparecerá en el otro. Elige el que te guste y quédate con él.
 
+## Dónde se guardan tus datos
+
+Aviso honesto primero: **esta app no usa base de datos.** Nada se envía a ningún servidor. Aquí va exactamente dónde quedan tus enlaces:
+
+- **Página web:** dentro de tu navegador (localStorage), en ese aparato. Sobreviven reinicios y actualizaciones — pero se pierden si limpias los datos del navegador, usas modo incógnito o desinstalas el navegador.
+- **Scripts de terminal:** archivos de texto reales en tu computadora, en `~/workspace/links_app/links/YYYY-MM-DD/` (o donde apunte `$LINKS_APP_WORKSPACE`). Esos sí son permanentes — cópialos, respáldalos, sincronízalos con Drive como cualquier archivo.
+
+**Recomendación:** exporta tu respaldo habitualmente. La página tiene un botón 📥 Exportar JSON — descarga el archivo y guárdalo donde guardas lo importante (Drive, una carpeta, un USB). Si algo pasa, 📤 Importar lo trae todo de vuelta.
+
+### Instalarla como app
+
+Link Vault funciona en el navegador, pero puedes darle su propio ícono:
+
+- **En tu teléfono:** abre la página en Chrome → menú ⋮ → "Agregar a pantalla de inicio" (o "Instalar app"). El ícono de Link Vault aparece en tu inicio y abre en pantalla completa, como cualquier app.
+- **En escritorio:** en Chrome, Edge o Brave → menú → "Guardar y compartir" → "Crear acceso directo" → marca "Abrir como ventana". Tendrás un ícono de Link Vault en tu escritorio/barra de tareas que abre en su propia ventana.
+
 ## Tags
 
 Siete tags predefinidos para empezar:
