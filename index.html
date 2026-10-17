@@ -338,6 +338,28 @@
             gap: 0.5rem;
         }
 
+        /* Touch-friendly tap targets for fingers */
+        .link-actions button {
+            min-height: 44px;
+            padding: 0.6rem 0.9rem;
+        }
+
+        /* Copy button */
+        .btn-copy {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: #34d399;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: var(--success);
+            color: white;
+        }
+
         .btn-delete {
             padding: 0.4rem 0.75rem;
             background: rgba(239, 68, 68, 0.1);
@@ -586,13 +608,13 @@
                 noResults: 'No se encontraron enlaces',
                 tryFilters: 'Prueba con otros filtros',
                 addFirst: 'Agrega tu primer enlace',
-                edit: '✏️ Editar', del: '🗑️ Eliminar',
+                edit: '✏️ Editar', del: '🗑️ Eliminar', copy: '📋 Copiar',
                 toastUpdated: 'Enlace actualizado',
                 toastSaved: 'Enlace guardado correctamente',
                 toastBackup: 'Respaldo descargado',
                 toastInvalid: 'Archivo inválido',
                 importedSuffix: 'enlace(s) importados',
-                toastDeleted: 'Enlace eliminado',
+                toastDeleted: 'Enlace eliminado', toastCopied: 'Enlace copiado',
                 confirmDelete: '¿Eliminar este enlace?',
                 errFormat: 'formato inválido',
                 locale: 'es-ES'
@@ -614,13 +636,13 @@
                 noResults: 'No links found',
                 tryFilters: 'Try different filters',
                 addFirst: 'Add your first link',
-                edit: '✏️ Edit', del: '🗑️ Delete',
+                edit: '✏️ Edit', del: '🗑️ Delete', copy: '📋 Copy',
                 toastUpdated: 'Link updated',
                 toastSaved: 'Link saved',
                 toastBackup: 'Backup downloaded',
                 toastInvalid: 'Invalid file',
                 importedSuffix: 'link(s) imported',
-                toastDeleted: 'Link deleted',
+                toastDeleted: 'Link deleted', toastCopied: 'Link copied',
                 confirmDelete: 'Delete this link?',
                 errFormat: 'invalid format',
                 locale: 'en-US'
@@ -773,6 +795,29 @@
             addForm.reset();
             paintTagLabels();
         });
+
+        // Copy Link: copy the URL to the clipboard (touch-friendly, one tap)
+        function copyLink(id) {
+            const link = links.find(l => l.id === id);
+            if (!link) return;
+            const done = () => showToast(t('toastCopied'));
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link.url).then(done).catch(() => fallbackCopy(link.url, done));
+            } else {
+                fallbackCopy(link.url, done);
+            }
+        }
+
+        function fallbackCopy(text, done) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) { /* clipboard unavailable */ }
+            document.body.removeChild(ta);
+        }
 
         // Edit Link: preload the form
         function editLink(id) {
@@ -938,6 +983,7 @@
                                 </div>
                             ` : ''}
                             <div class="link-actions">
+                                <button class="btn-copy" onclick="copyLink(${link.id})">${t('copy')}</button>
                                 <button class="btn-edit" onclick="editLink(${link.id})">${t('edit')}</button>
                                 <button class="btn-delete" onclick="deleteLink(${link.id})">${t('del')}</button>
                             </div>
