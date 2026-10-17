@@ -180,10 +180,12 @@ Honest warning first: **this app has no database.** Nothing is sent to any serve
 
 ### Install it as an app
 
-Link Vault works in the browser, but you can give it its own icon:
+<img src="icons/favicon.svg" width="96" alt="Link Vault mascot">
 
-- **On your phone:** open the page in Chrome → menu ⋮ → "Add to Home screen" (or "Install app"). The Link Vault icon appears on your home screen and opens full-screen, like any app.
-- **On desktop:** in Chrome, Edge or Brave → menu → "Save and share" → "Create shortcut" → check "Open as window". You get a Link Vault icon on your desktop/taskbar that opens in its own window.
+This little cat is the Link Vault shortcut icon. Install it and use it to open the app without typing the address:
+
+- **On your phone:** open the page in Chrome → menu ⋮ → "Add to Home screen" (or "Install app"). The cat appears on your home screen and opens full-screen, like any app.
+- **On desktop:** in Chrome, Edge or Brave → menu → "Save and share" → "Create shortcut" → check "Open as window". The cat lands on your desktop/taskbar and opens in its own window.
 
 ## Tags
 

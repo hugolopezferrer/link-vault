@@ -178,10 +178,12 @@ Aviso honesto primero: **esta app no usa base de datos.** Nada se envía a ning�
 
 ### Instalarla como app
 
-Link Vault funciona en el navegador, pero puedes darle su propio ícono:
+<img src="icons/favicon.svg" width="96" alt="Mascota de Link Vault">
 
-- **En tu teléfono:** abre la página en Chrome → menú ⋮ → "Agregar a pantalla de inicio" (o "Instalar app"). El ícono de Link Vault aparece en tu inicio y abre en pantalla completa, como cualquier app.
-- **En escritorio:** en Chrome, Edge o Brave → menú → "Guardar y compartir" → "Crear acceso directo" → marca "Abrir como ventana". Tendrás un ícono de Link Vault en tu escritorio/barra de tareas que abre en su propia ventana.
+Este gatito es el ícono de acceso directo de Link Vault. Instálalo y úsalo para abrir la app sin escribir la dirección:
+
+- **En tu teléfono:** abre la página en Chrome → menú ⋮ → "Agregar a pantalla de inicio" (o "Instalar app"). El gatito aparece en tu inicio y abre en pantalla completa, como cualquier app.
+- **En escritorio:** en Chrome, Edge o Brave → menú → "Guardar y compartir" → "Crear acceso directo" → marca "Abrir como ventana". El gatito queda en tu escritorio/barra de tareas y abre en su propia ventana.
 
 ## Tags
 
